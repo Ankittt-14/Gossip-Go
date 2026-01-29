@@ -63,8 +63,8 @@ export const register = asynchandler(async (req, res, next) => {
     .cookie("token", token, {
       expires: new Date(Date.now() + process.env.COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax'
+      secure: process.env.NODE_ENV === 'production' || process.env.VERCEL,
+      sameSite: (process.env.NODE_ENV === 'production' || process.env.VERCEL) ? 'None' : 'Lax'
     })
     .json({
       success: true,
@@ -112,8 +112,8 @@ export const login = asynchandler(async (req, res, next) => {
     .cookie("token", token, {
       expires: new Date(Date.now() + process.env.COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax'
+      secure: process.env.NODE_ENV === 'production' || process.env.VERCEL, // Use secure in production or Vercel
+      sameSite: (process.env.NODE_ENV === 'production' || process.env.VERCEL) ? 'None' : 'Lax'
     })
     .json({
       success: true,
