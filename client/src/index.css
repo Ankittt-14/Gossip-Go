@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #1a1d29;
+  color: #ffffff;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1d29;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3b82f6;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2563eb;
+}
+
+/* Message Bubbles */
+.message-sent {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border-radius: 18px 18px 4px 18px;
+  padding: 12px 16px;
+  width: fit-content;
+  word-wrap: break-word;
+}
+
+.message-received {
+  background-color: #252836;
+  color: #e5e7eb;
+  border-radius: 18px 18px 18px 4px;
+  padding: 12px 16px;
+  width: fit-content;
+  word-wrap: break-word;
+}
+
+/* Online Status */
+.avatar.online::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  background-color: #10b981;
+  border-radius: 50%;
+  border: 2px solid #1a1d29;
+}
+
+/* Typing Indicator */
+.typing-indicator {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+}
+
+.typing-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #6b7280;
+  border-radius: 50%;
+  animation: typing 1.4s infinite;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+
+  30% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Smooth Transitions */
+.smooth-transition {
+  transition: all 0.3s ease;
+}
+
+/* Card Hover */
+.card-hover:hover {
+  background-color: #2d3142;
+  transform: translateX(2px);
+}
+
+/* Input Styles */
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+/* Button Styles */
+.btn {
+  text-transform: none;
+  border-radius: 8px;
+}
+
+/* Date Divider */
+.date-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+.date-divider span {
+  background-color: #2d3142;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  text-transform: uppercase;
+}
