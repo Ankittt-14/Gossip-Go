@@ -108,17 +108,20 @@ const Messagecontainer = () => {
           <div className="relative">
             <div className="avatar">
               <div className="w-12 rounded-full">
-                <img src={selectedUser.avatar} alt={selectedUser.fullName} />
+                <img src={selectedUser.avatar || selectedUser.groupAvatar} alt={selectedUser.fullName || selectedUser.groupName} />
               </div>
             </div>
-            {isOnline && (
+            {/* Only show online status for individual users, not groups unless we check all members... simple for now: hide for group */}
+            {!selectedUser.isGroup && isOnline && (
               <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-[#252836] rounded-full"></span>
             )}
           </div>
           <div>
-            <p className="font-semibold text-white">{selectedUser.fullName}</p>
+            <p className="font-semibold text-white">{selectedUser.fullName || selectedUser.groupName}</p>
             <p className="text-sm text-gray-400">
-              {isTyping ? (
+              {selectedUser.isGroup ? (
+                <span className="text-gray-500">{selectedUser.participants.length} members</span>
+              ) : isTyping ? (
                 <span className="text-blue-500">Typing...</span>
               ) : isOnline ? (
                 <span className="text-green-500">Online</span>
@@ -129,13 +132,15 @@ const Messagecontainer = () => {
           </div>
         </div>
         <div className="flex gap-2">
-          <button
-            onClick={handleRemoveFriend}
-            className="btn btn-ghost btn-circle text-gray-400 hover:text-red-500"
-            title="Remove Friend"
-          >
-            <FaTrash className="text-xl" />
-          </button>
+          {!selectedUser.isGroup && (
+            <button
+              onClick={handleRemoveFriend}
+              className="btn btn-ghost btn-circle text-gray-400 hover:text-red-500"
+              title="Remove Friend"
+            >
+              <FaTrash className="text-xl" />
+            </button>
+          )}
           <button className="btn btn-ghost btn-circle text-gray-400 hover:text-white">
             <FaInfoCircle className="text-xl" />
           </button>

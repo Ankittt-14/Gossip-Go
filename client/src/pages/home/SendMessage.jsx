@@ -17,7 +17,8 @@ const SendMessage = () => {
   const handleTyping = (e) => {
     setMessage(e.target.value);
 
-    if (socket && selectedUser) {
+    // Only send typing indicator for 1-on-1 chats for now
+    if (socket && selectedUser && !selectedUser.isGroup) {
       if (e.target.value.length > 0 && !isTyping) {
         setIsTyping(true);
         socket.emit('typing', {
@@ -50,7 +51,7 @@ const SendMessage = () => {
     }
 
     // Stop typing indicator
-    if (socket && isTyping) {
+    if (socket && isTyping && !selectedUser.isGroup) {
       socket.emit('typing', {
         receiverId: selectedUser._id,
         senderId: userProfile._id,

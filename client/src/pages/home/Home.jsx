@@ -26,11 +26,26 @@ const Home = () => {
     });
 
     socket.on("newMessage", (newMessage) => {
-      const isChatOpen = selectedUser?._id === newMessage.senderId;
+      // Logic for 1-on-1 vs Group
+      let isChatOpen = false;
+
+      if (newMessage.conversationId) {
+        // It's a group message
+        isChatOpen = selectedUser?._id === newMessage.conversationId;
+      } else {
+        // It's a 1-on-1 message
+        isChatOpen = selectedUser?._id === newMessage.senderId;
+      }
+
       if (isChatOpen) {
         dispatch(setNewMessage(newMessage));
       } else {
-        dispatch(markMessageAsUnread(newMessage.senderId));
+        // Dispatch unread for the correct entity
+        // If group, unread count should be on the Group ID? 
+        // Currently 'markMessageAsUnread' takes 'senderId' and adds to 'unreadMessages' array.
+        // Usersidebar checks 'unreadMessages.includes(user._id)'.
+        // So for Groups, we should push conversationId to unreadMessages.
+        dispatch(markMessageAsUnread(newMessage.conversationId || newMessage.senderId));
       }
     });
 
