@@ -20,6 +20,11 @@ const messageSchema = new mongoose.Schema(
             type: String,
             enum: ['sent', 'delivered', 'seen'],
             default: 'sent'
+        },
+        conversationId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Conversation',
+            default: null
         }
     },
     {
