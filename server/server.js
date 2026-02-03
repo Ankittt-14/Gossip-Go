@@ -59,7 +59,9 @@ import { errorMiddleware } from "./middlewares/error.middleware.js";
 app.use(errorMiddleware);
 
 // Start server
-if (process.env.NODE_ENV !== "production") {
+// Start server
+// Only listen if NOT running on Vercel (Vercel handles listening automatically)
+if (!process.env.VERCEL) {
   server.listen(PORT, () => {
     console.log(`✅ Server running on port ${PORT}`);
     console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
