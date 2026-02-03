@@ -57,12 +57,23 @@ io.on("connection", async (socket) => {
         }
     });
 
-    socket.on("markMessagesAsSeen", (data) => {
-        const receiverSocketId = userSocketMap[data.senderId];
-        if (receiverSocketId) {
-            io.to(receiverSocketId).emit("messagesSeen", {
-                receiverId: data.seenBy
-            });
+    socket.on("markMessagesAsSeen", async (data) => {
+        try {
+            const { senderId, seenBy } = data;
+            // Update all messages from senderId to seenBy as 'seen'
+            await Message.updateMany(
+                { senderId: senderId, receiverId: seenBy, status: { $ne: 'seen' } },
+                { $set: { status: 'seen' } }
+            );
+
+            const receiverSocketId = userSocketMap[senderId];
+            if (receiverSocketId) {
+                io.to(receiverSocketId).emit("messagesSeen", {
+                    receiverId: seenBy
+                });
+            }
+        } catch (error) {
+            console.error("Error marking messages as seen:", error);
         }
     });
 
