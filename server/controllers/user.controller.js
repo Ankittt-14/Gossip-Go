@@ -6,9 +6,11 @@ import bcrypt from "bcryptjs";
 import { getSocketId, io } from "../socket/socket.js";
 
 // Generate random unique avatar based on gender
+// Generate avatar using DiceBear (Faster Global CDN)
 const generateAvatar = (gender, username) => {
-  const seed = Math.random().toString(36).substring(7);
-  return `https://avatar.iran.liara.run/public/${gender === "male" ? "boy" : "girl"}?username=${username}_${seed}`;
+  // Using 'avataaars' style which is consistent and fast
+  // We use the username as the seed to ensure the same user always gets the same avatar
+  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`;
 };
 
 // Register new user
