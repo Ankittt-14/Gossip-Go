@@ -7,10 +7,11 @@ import { getSocketId, io } from "../socket/socket.js";
 
 // Generate random unique avatar based on gender
 // Generate avatar using DiceBear (Faster Global CDN)
+// Generate avatar using UI Avatars (Extremely Fast & Reliable)
 const generateAvatar = (gender, username) => {
-  // Using 'avataaars' style which is consistent and fast
-  // We use the username as the seed to ensure the same user always gets the same avatar
-  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`;
+  // Use UI Avatars which generates initials. It's the fastest option available.
+  // We encode the username to handle spaces correctly.
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random&color=fff&size=128`;
 };
 
 // Register new user
