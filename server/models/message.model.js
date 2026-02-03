@@ -5,12 +5,12 @@ const messageSchema = new mongoose.Schema(
         senderId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
-            required: true
+            required: false // Optional for system messages
         },
         receiverId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
-            required: true
+            required: false // Optional for system messages
         },
         message: {
             type: String,
@@ -25,6 +25,10 @@ const messageSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Conversation',
             default: null
+        },
+        isSystemMessage: {
+            type: Boolean,
+            default: false
         }
     },
     {

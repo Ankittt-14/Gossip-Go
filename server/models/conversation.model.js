@@ -8,6 +8,13 @@ const conversationSchema = new mongoose.Schema(
                 ref: 'User',
             },
         ],
+        pendingParticipants: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User',
+                default: []
+            },
+        ],
         messages: [
             {
                 type: mongoose.Schema.Types.ObjectId,

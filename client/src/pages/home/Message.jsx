@@ -19,6 +19,16 @@ const Message = ({ message }) => {
     return `${formattedHours}:${formattedMinutes} ${ampm}`;
   };
 
+  if (message.isSystemMessage) {
+    return (
+      <div className="flex justify-center my-2">
+        <span className="text-xs text-gray-400 bg-[#2a2d3e] px-3 py-1 rounded-full opacity-80">
+          {message.message}
+        </span>
+      </div>
+    );
+  }
+
   return (
     <div className={`flex items-start gap-2 ${isMyMessage ? 'flex-row-reverse' : ''}`}>
       <div className="avatar">

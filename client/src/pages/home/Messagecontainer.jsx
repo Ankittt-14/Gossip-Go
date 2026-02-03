@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Message from './Message';
 import SendMessage from './SendMessage';
-import { FaPhone, FaVideo, FaInfoCircle, FaArrowLeft, FaTrash } from 'react-icons/fa';
+import GroupInfoModal from './GroupInfoModal'; // Import
+import { FaPhone, FaVideo, FaInfoCircle, FaArrowLeft, FaTrash, FaCheck, FaTimes } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import { getUserThunk } from '../../store/slice/user/user.thunk';
 
@@ -19,8 +20,13 @@ const Messagecontainer = () => {
   const { userProfile } = useSelector((state) => state.userReducer);
   const scrollRef = useRef();
 
+  const [showGroupInfo, setShowGroupInfo] = useState(false); // State for modal
+
   const isOnline = selectedUser && onlineUsers?.includes(selectedUser._id);
   const isTyping = selectedUser && typing[selectedUser._id];
+
+  // Check if I am a pending participant
+  const isPending = selectedUser?.isGroup && selectedUser?.pendingParticipants?.some(p => p._id === userProfile._id || p === userProfile._id);
 
   const formatDateDivider = (date) => {
     const messageDate = new Date(date);
@@ -43,6 +49,11 @@ const Messagecontainer = () => {
 
   useEffect(() => {
     if (selectedUser && socket && userProfile) {
+      if (selectedUser.isGroup) {
+        // Join the room for real-time updates
+        socket.emit("join-chat", selectedUser._id);
+      }
+
       // Tell backend we saw the messages
       const markSeen = async () => {
         try {
@@ -72,6 +83,27 @@ const Messagecontainer = () => {
       }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to remove friend');
+    }
+  };
+
+  const handleAcceptInvite = async () => {
+    try {
+      await axiosInstance.put(`/api/v1/conversation/accept-invite/${selectedUser._id}`);
+      toast.success("Joined group!");
+      window.location.reload(); // Refresh to update state
+    } catch (error) {
+      toast.error("Failed to join");
+    }
+  };
+
+  const handleRejectInvite = async () => {
+    try {
+      await axiosInstance.put(`/api/v1/conversation/reject-invite/${selectedUser._id}`);
+      toast.success("Invite rejected");
+      dispatch(setSelectedUser(null));
+      window.location.reload();
+    } catch (error) {
+      toast.error("Failed to reject");
     }
   };
 
@@ -120,7 +152,7 @@ const Messagecontainer = () => {
             <p className="font-semibold text-white">{selectedUser.fullName || selectedUser.groupName}</p>
             <p className="text-sm text-gray-400">
               {selectedUser.isGroup ? (
-                <span className="text-gray-500">{selectedUser.participants.length} members</span>
+                <span className="text-gray-500">{selectedUser.participants?.length} members</span>
               ) : isTyping ? (
                 <span className="text-blue-500">Typing...</span>
               ) : isOnline ? (
@@ -141,17 +173,24 @@ const Messagecontainer = () => {
               <FaTrash className="text-xl" />
             </button>
           )}
-          <button className="btn btn-ghost btn-circle text-gray-400 hover:text-white">
-            <FaInfoCircle className="text-xl" />
-          </button>
+          {selectedUser.isGroup && (
+            <button
+              onClick={() => setShowGroupInfo(true)}
+              className="btn btn-ghost btn-circle text-gray-400 hover:text-white"
+            >
+              <FaInfoCircle className="text-xl" />
+            </button>
+          )}
+          {!selectedUser.isGroup && (
+            <button className="btn btn-ghost btn-circle text-gray-400 hover:text-white">
+              <FaInfoCircle className="text-xl" />
+            </button>
+          )}
         </div>
       </div>
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4" style={{ backgroundColor: '#1a1d29' }}>
-        {/* Date Divider */}
-        {/* Removed static TODAY divider */}
-
         {loading ? (
           <div className="flex justify-center py-8">
             <span className="loading loading-spinner loading-lg text-blue-500"></span>
@@ -200,8 +239,25 @@ const Messagecontainer = () => {
         <div ref={scrollRef} />
       </div>
 
-      {/* Message Input */}
-      <SendMessage />
+      {/* Invite Banner or Input */}
+      {isPending ? (
+        <div className="p-4 bg-[#252836] border-t border-gray-800 flex flex-col items-center gap-3">
+          <p className="text-gray-300">You have been invited to join this group.</p>
+          <div className="flex gap-4">
+            <button onClick={handleAcceptInvite} className="btn btn-success btn-sm gap-2 text-white">
+              <FaCheck /> Accept
+            </button>
+            <button onClick={handleRejectInvite} className="btn btn-error btn-outline btn-sm gap-2">
+              <FaTimes /> Decline
+            </button>
+          </div>
+        </div>
+      ) : (
+        <SendMessage />
+      )}
+
+      {/* Info Modal */}
+      {showGroupInfo && <GroupInfoModal onClose={() => setShowGroupInfo(false)} />}
     </div>
   );
 };
