@@ -42,9 +42,11 @@ app.get('/health', (req, res) => {
 // Routes
 import userRoute from "./routes/user.route.js";
 import messageRoute from "./routes/message.route.js";
+import conversationRoute from "./routes/conversation.route.js";
 
 app.use('/api/v1/user', userRoute);
 app.use('/api/v1/message', messageRoute);
+app.use('/api/v1/conversation', conversationRoute);
 
 // 404 handler - FIXED
 app.use((req, res) => {
