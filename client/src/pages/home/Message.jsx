@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { BsCheck, BsCheckAll } from "react-icons/bs";
+import { FaUserPlus, FaUserMinus, FaCrown, FaInfoCircle } from "react-icons/fa";
 
 const Message = ({ message }) => {
   const { userProfile } = useSelector((state) => state.userReducer);
@@ -20,10 +21,15 @@ const Message = ({ message }) => {
   };
 
   if (message.isSystemMessage) {
+    let icon = <FaInfoCircle />;
+    if (message.message.includes("joined")) icon = <FaUserPlus />;
+    if (message.message.includes("left")) icon = <FaUserMinus />;
+    if (message.message.includes("created")) icon = <FaCrown />;
+
     return (
       <div className="flex justify-center my-2">
-        <span className="text-xs text-gray-400 bg-[#2a2d3e] px-3 py-1 rounded-full opacity-80">
-          {message.message}
+        <span className="text-xs text-gray-400 bg-[#2a2d3e] px-3 py-1 rounded-full opacity-80 flex items-center gap-2">
+          {icon} {message.message}
         </span>
       </div>
     );
