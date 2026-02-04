@@ -109,9 +109,12 @@ Contributions are what make the open-source community such an amazing place to l
 
 ## 📧 Contact
 
-**Maintainer** - [Your Name/Email]
+**Maintainer** - [Ankit]
 
-Project Link: [https://github.com/yourusername/Gossip-go](https://github.com/yourusername/Gossip-go)
+Project Link: https://gossip-go-zf2g.vercel.app/
+GitHub: [Ankittt-14](https://github.com/Ankittt-14)
+Repository: [https://github.com/Ankittt-14/Gossip-Go](https://github.com/Ankittt-14/Gossip-Go)
+
 
 ---
 
