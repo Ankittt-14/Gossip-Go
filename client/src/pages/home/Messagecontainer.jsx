@@ -11,7 +11,7 @@ import { getMessagesThunk } from '../../store/slice/message/message.thunk';
 
 import { BsChatSquareTextFill } from 'react-icons/bs';
 import { useDispatch } from 'react-redux';
-import { setSelectedUser, setMessagesSeen } from '../../store/slice/message/message.slice';
+import { setSelectedUser, setMessagesSeen, markMessageAsRead } from '../../store/slice/message/message.slice';
 import axiosInstance from '../../components/axiosInstance';
 
 const Messagecontainer = () => {
@@ -60,6 +60,9 @@ const Messagecontainer = () => {
         // Join the room for real-time updates
         socket.emit("join-chat", selectedUser._id);
       }
+
+      // Clear local unread badge immediately
+      dispatch(markMessageAsRead(selectedUser._id));
 
       // Tell backend we saw the messages
       const markSeen = async () => {

@@ -326,7 +326,10 @@ const Usersidebar = () => {
                 {conversations.map(group => (
                   <div
                     key={group._id}
-                    onClick={() => dispatch(setSelectedUser(group))} // Group object works as 'User' mostly
+                    onClick={() => {
+                      dispatch(setSelectedUser(group));
+                      dispatch(markMessageAsRead(group._id));
+                    }}
                     className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition ${selectedUser?._id === group._id ? 'bg-blue-500 text-white' : 'bg-[#252836] text-gray-300 hover:bg-[#2d3142]'}`}
                   >
                     <div className="avatar">
