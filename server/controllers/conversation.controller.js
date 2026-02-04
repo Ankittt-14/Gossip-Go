@@ -136,6 +136,51 @@ export const leaveGroup = asynchandler(async (req, res, next) => {
     res.status(200).json({ success: true, message: "Left group successfully" });
 });
 
+export const addMemberToGroup = asynchandler(async (req, res, next) => {
+    const { groupId } = req.params;
+    const { participants } = req.body; // Array of userIds to add
+    const userId = req.user._id;
+
+    if (!participants || !Array.isArray(participants) || participants.length === 0) {
+        return next(new errorhandler("Please select members to add", 400));
+    }
+
+    const conversation = await Conversation.findById(groupId);
+    if (!conversation) return next(new errorhandler("Group not found", 404));
+
+    // Check if requester is admin
+    if (conversation.groupAdmin.toString() !== userId.toString()) {
+        return next(new errorhandler("Only admin can add members", 403));
+    }
+
+    // Filter out users who are already participants or pending
+    const newParticipants = participants.filter(id =>
+        !conversation.participants.includes(id) &&
+        !conversation.pendingParticipants.includes(id)
+    );
+
+    if (newParticipants.length === 0) {
+        return next(new errorhandler("All selected users are already in the group or invited", 400));
+    }
+
+    // Add to pendingParticipants
+    conversation.pendingParticipants.push(...newParticipants);
+    await conversation.save();
+
+    // System Message
+    // Fetch names of added users for the message? Or just generic.
+    // Let's just say "Admin invited X users"
+    const adminUser = await User.findById(userId);
+
+    await Message.create({
+        conversationId: conversation._id,
+        message: `${adminUser.fullName} invited ${newParticipants.length} new member(s)`,
+        isSystemMessage: true
+    });
+
+    res.status(200).json({ success: true, message: "Invites sent successfully", data: conversation });
+});
+
 // Get User's Conversations (including 1-on-1 and Groups)
 export const getMyConversations = asynchandler(async (req, res, next) => {
     const userId = req.user._id;

@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { FaTimes, FaUser, FaSignOutAlt, FaCrown } from 'react-icons/fa';
+import { FaTimes, FaUser, FaSignOutAlt, FaCrown, FaUserPlus } from 'react-icons/fa';
 import axiosInstance from '../../components/axiosInstance';
 import toast from 'react-hot-toast';
 import { setSelectedUser } from '../../store/slice/message/message.slice';
+import AddMemberModal from './AddMemberModal';
 
 const GroupInfoModal = ({ onClose }) => {
     const { selectedUser } = useSelector((state) => state.messageReducer);
     const { userProfile } = useSelector((state) => state.userReducer);
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
+    const [showAddMember, setShowAddMember] = useState(false);
 
     if (!selectedUser || !selectedUser.isGroup) return null;
 
@@ -58,7 +60,17 @@ const GroupInfoModal = ({ onClose }) => {
                 </div>
 
                 <div className="mb-6">
-                    <h4 className="text-gray-400 text-sm font-semibold mb-2 uppercase tracking-wide">Participants</h4>
+                    <div className="flex justify-between items-center mb-2">
+                        <h4 className="text-gray-400 text-sm font-semibold uppercase tracking-wide">Participants</h4>
+                        {selectedUser.groupAdmin?._id === userProfile._id && (
+                            <button
+                                onClick={() => setShowAddMember(true)}
+                                className="text-blue-500 hover:text-blue-400 text-sm flex items-center gap-1 font-medium"
+                            >
+                                <FaUserPlus /> Add Member
+                            </button>
+                        )}
+                    </div>
                     <div className="max-h-60 overflow-y-auto space-y-2">
                         {selectedUser.participants.map((participant) => (
                             <div key={participant._id} className="flex items-center justify-between p-2 hover:bg-[#2a2d3e] rounded">
@@ -94,6 +106,13 @@ const GroupInfoModal = ({ onClose }) => {
                     </button>
                 </div>
             </div>
+            {showAddMember && (
+                <AddMemberModal
+                    groupId={selectedUser._id}
+                    currentParticipants={selectedUser.participants}
+                    onClose={() => setShowAddMember(false)}
+                />
+            )}
         </div>
     );
 };
