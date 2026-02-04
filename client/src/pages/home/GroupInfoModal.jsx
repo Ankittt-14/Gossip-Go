@@ -9,6 +9,7 @@ import AddMemberModal from './AddMemberModal';
 const GroupInfoModal = ({ onClose }) => {
     const { selectedUser } = useSelector((state) => state.messageReducer);
     const { userProfile } = useSelector((state) => state.userReducer);
+    const { onlineUsers } = useSelector((state) => state.socketReducer); // Get online users
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
     const [showAddMember, setShowAddMember] = useState(false);
@@ -72,23 +73,31 @@ const GroupInfoModal = ({ onClose }) => {
                         )}
                     </div>
                     <div className="max-h-60 overflow-y-auto space-y-2">
-                        {selectedUser.participants.map((participant) => (
-                            <div key={participant._id} className="flex items-center justify-between p-2 hover:bg-[#2a2d3e] rounded">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-full overflow-hidden">
-                                        <img src={participant.avatar} alt={participant.fullName} className="w-full h-full object-cover" />
+                        {selectedUser.participants.map((participant) => {
+                            const isOnline = onlineUsers?.includes(participant._id);
+                            return (
+                                <div key={participant._id} className="flex items-center justify-between p-2 hover:bg-[#2a2d3e] rounded">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`relative w-8 h-8 rounded-full overflow-hidden ${isOnline ? 'ring-2 ring-green-500' : ''}`}>
+                                            <img src={participant.avatar} alt={participant.fullName} className="w-full h-full object-cover" />
+                                        </div>
+                                        <div>
+                                            <span className="text-gray-200 block leading-tight">
+                                                {participant._id === userProfile._id ? "You" : participant.fullName}
+                                            </span>
+                                            {isOnline && participant._id !== userProfile._id && (
+                                                <span className="text-[10px] text-green-500">Online</span>
+                                            )}
+                                        </div>
                                     </div>
-                                    <span className="text-gray-200">
-                                        {participant._id === userProfile._id ? "You" : participant.fullName}
-                                    </span>
+                                    {selectedUser.groupAdmin?._id === participant._id && (
+                                        <span className="text-yellow-500" title="Admin">
+                                            <FaCrown />
+                                        </span>
+                                    )}
                                 </div>
-                                {selectedUser.groupAdmin?._id === participant._id && (
-                                    <span className="text-yellow-500" title="Admin">
-                                        <FaCrown />
-                                    </span>
-                                )}
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
 

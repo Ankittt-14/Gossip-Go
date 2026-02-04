@@ -43,6 +43,11 @@ const Message = ({ message }) => {
         </div>
       </div>
       <div className={`flex flex-col ${isMyMessage ? 'items-end' : 'items-start'} max-w-[70%]`}>
+        {!isMyMessage && selectedUser?.isGroup && message.senderId && (
+          <span className="text-xs text-blue-400 font-medium ml-1 mb-0.5">
+            {message.senderId.fullName}
+          </span>
+        )}
         <div className={isMyMessage ? 'message-sent' : 'message-received'}>
           <p className="text-sm">{message.message}</p>
         </div>

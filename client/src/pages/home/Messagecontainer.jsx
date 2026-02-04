@@ -48,6 +48,12 @@ const Messagecontainer = () => {
   }, [messages, isTyping]);
 
   useEffect(() => {
+    if (selectedUser?._id) {
+      dispatch(getMessagesThunk(selectedUser._id));
+    }
+  }, [selectedUser?._id, dispatch]);
+
+  useEffect(() => {
     if (selectedUser && socket && userProfile) {
       if (selectedUser.isGroup) {
         // Join the room for real-time updates

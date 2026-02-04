@@ -92,13 +92,13 @@ export const sendMessage = asynchandler(async (req, res, next) => {
     }
 
     // Emit to all participants except sender
+    // Need to populate senderId for frontend to show name/avatar immediately
+    await newMessage.populate("senderId", "fullName avatar username");
+
     groupConversation.participants.forEach(participantId => {
       if (participantId.toString() !== senderId.toString()) {
         const socketId = getSocketId(participantId.toString());
         if (socketId) {
-          // Emit same 'newMessage' event. Frontend needs to handle it.
-          // If frontend checks selectedUser._id === newMessage.senderId, it works for 1-on-1.
-          // For Group, frontend might need 'conversationId'.
           io.to(socketId).emit("newMessage", newMessage);
         }
       }
@@ -141,7 +141,13 @@ export const getMessages = asynchandler(async (req, res, next) => {
   }
 
   // Check if it's a Group (Conversation)
-  const groupConversation = await Conversation.findById(otherParticipantId).populate("messages");
+  const groupConversation = await Conversation.findById(otherParticipantId).populate({
+    path: "messages",
+    populate: {
+      path: "senderId",
+      select: "fullName avatar username"
+    }
+  });
 
   if (groupConversation && groupConversation.isGroup) {
     // Check if user is member
@@ -161,15 +167,19 @@ export const getMessages = asynchandler(async (req, res, next) => {
   const isFriend = (await User.findById(myId)).friends.includes(otherParticipantId);
 
   if (!isFriend) {
-    // If not friend, maybe handle strictly? Or just return empty?
-    // Existing logic was strict.
     return next(new errorhandler("You can only view messages from your friends", 403));
   }
 
   let conversation = await Conversation.findOne({
     participants: { $all: [myId, otherParticipantId] },
     isGroup: false
-  }).populate("messages");
+  }).populate({
+    path: "messages",
+    populate: {
+      path: "senderId",
+      select: "fullName avatar username"
+    }
+  });
 
   if (!conversation) {
     return res.status(200).json({
