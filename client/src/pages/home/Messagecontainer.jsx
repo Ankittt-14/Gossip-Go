@@ -137,7 +137,7 @@ const Messagecontainer = () => {
   }
 
   return (
-    <div className="flex-1 flex flex-col h-screen" style={{ backgroundColor: '#1a1d29' }}>
+    <div className="flex-1 flex flex-col h-full" style={{ backgroundColor: '#1a1d29' }}>
       {/* Chat Header */}
       <div className="p-4 border-b border-gray-800 flex items-center justify-between" style={{ backgroundColor: '#252836' }}>
         <div className="flex items-center gap-3">

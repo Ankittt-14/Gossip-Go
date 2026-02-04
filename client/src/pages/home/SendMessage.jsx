@@ -88,7 +88,7 @@ const SendMessage = () => {
   };
 
   return (
-    <div className="p-4 border-t border-gray-800" style={{ backgroundColor: '#252836' }}>
+    <div className="p-2 md:p-4 border-t border-gray-800" style={{ backgroundColor: '#252836' }}>
       <form onSubmit={handleSendMessage} className="flex items-center gap-3">
         {/* Attachment Button */}
         <button

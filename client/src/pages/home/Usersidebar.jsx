@@ -174,7 +174,7 @@ const Usersidebar = () => {
   );
 
   return (
-    <div className="w-full md:w-96 flex flex-col h-screen border-r border-gray-800" style={{ backgroundColor: '#1a1d29' }}>
+    <div className="w-full md:w-96 flex flex-col h-full border-r border-gray-800" style={{ backgroundColor: '#1a1d29' }}>
       {/* Header */}
       <div className="p-4 border-b border-gray-800" style={{ backgroundColor: '#252836' }}>
         <div className="flex items-center justify-between mb-4">

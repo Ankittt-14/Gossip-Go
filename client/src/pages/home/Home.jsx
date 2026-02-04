@@ -88,7 +88,7 @@ const Home = () => {
   }, [socket, dispatch, selectedUser]);
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: '#1a1d29' }}>
+    <div className="flex h-[100dvh] overflow-hidden" style={{ backgroundColor: '#1a1d29' }}>
       <div className={`${selectedUser ? 'hidden md:flex' : 'flex'} w-full md:w-auto`}>
         <Usersidebar />
       </div>
