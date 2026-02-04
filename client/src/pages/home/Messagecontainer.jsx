@@ -6,6 +6,7 @@ import GroupInfoModal from './GroupInfoModal'; // Import
 import { FaPhone, FaVideo, FaInfoCircle, FaArrowLeft, FaTrash, FaCheck, FaTimes } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import { getUserThunk } from '../../store/slice/user/user.thunk';
+import { getMessagesThunk } from '../../store/slice/message/message.thunk';
 
 
 import { BsChatSquareTextFill } from 'react-icons/bs';
