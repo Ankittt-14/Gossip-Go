@@ -29,23 +29,38 @@ const Home = () => {
       // Logic for 1-on-1 vs Group
       let isChatOpen = false;
 
-      if (newMessage.conversationId) {
-        // It's a group message
-        isChatOpen = selectedUser?._id === newMessage.conversationId;
+      // Ensure senderId is handled whether populated or not
+      const senderId = newMessage.senderId?._id || newMessage.senderId;
+
+      if (selectedUser?.isGroup) {
+        // Group Logic: Check if message belongs to this group
+        // In group messages, conversationId is the Group ID
+        isChatOpen = newMessage.conversationId === selectedUser._id;
       } else {
-        // It's a 1-on-1 message
-        isChatOpen = selectedUser?._id === newMessage.senderId;
+        // 1-on-1 Logic: Check if message is from the selected user AND intended for ME (not a group)
+        // In 1-on-1, receiverId matches my profile ID (userProfile._id)
+        // And sender should be the selectedUser
+        isChatOpen =
+          senderId === selectedUser?._id &&
+          newMessage.receiverId === userProfile?._id;
       }
 
       if (isChatOpen) {
         dispatch(setNewMessage(newMessage));
       } else {
-        // Dispatch unread for the correct entity
-        // If group, unread count should be on the Group ID? 
-        // Currently 'markMessageAsUnread' takes 'senderId' and adds to 'unreadMessages' array.
-        // Usersidebar checks 'unreadMessages.includes(user._id)'.
-        // So for Groups, we should push conversationId to unreadMessages.
-        dispatch(markMessageAsUnread(newMessage.conversationId || newMessage.senderId));
+        // Dispatch unread
+        // If it's a group message, key is conversationId (which is the Group ID)
+        // If it's 1-on-1, key is senderId
+
+        // Check if it's a group message (receiverId is a Group ID usually, or conversationId exists)
+        // But 1-on-1 also has conversationId now.
+        // Use receiverId: if receiverId === userProfile._id, it's 1-on-1 (use senderId).
+        // Otherwise it's group (use conversationId).
+
+        const isGroupMsg = newMessage.receiverId !== userProfile?._id;
+        const unreadKey = isGroupMsg ? newMessage.conversationId : senderId;
+
+        dispatch(markMessageAsUnread(unreadKey));
       }
     });
 
