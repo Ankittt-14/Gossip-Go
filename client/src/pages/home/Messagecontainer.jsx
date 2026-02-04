@@ -159,7 +159,15 @@ const Messagecontainer = () => {
             <p className="font-semibold text-white">{selectedUser.fullName || selectedUser.groupName}</p>
             <p className="text-sm text-gray-400">
               {selectedUser.isGroup ? (
-                <span className="text-gray-500">{selectedUser.participants?.length} members</span>
+                <span className="text-gray-500">
+                  {(() => {
+                    const typingUsers = selectedUser.participants.filter(p => typing[p._id] && p._id !== userProfile._id);
+                    if (typingUsers.length > 0) {
+                      return <span className="text-blue-500">{typingUsers.map(u => u.fullName).join(", ")} is typing...</span>;
+                    }
+                    return `${selectedUser.participants.length} members`;
+                  })()}
+                </span>
               ) : isTyping ? (
                 <span className="text-blue-500">Typing...</span>
               ) : isOnline ? (

@@ -7,8 +7,19 @@ const Message = ({ message }) => {
   const { userProfile } = useSelector((state) => state.userReducer);
   const { selectedUser } = useSelector((state) => state.messageReducer);
 
-  const isMyMessage = message.senderId === userProfile?._id;
-  const avatar = isMyMessage ? userProfile?.avatar : selectedUser?.avatar;
+  // Handle populated senderId (object) or raw ID (string)
+  const senderId = message.senderId?._id || message.senderId;
+  const isMyMessage = senderId === userProfile?._id;
+
+  // Determine avatar: My avatar, Sender's avatar (Group), or Selected User (1-on-1)
+  let avatar;
+  if (isMyMessage) {
+    avatar = userProfile?.avatar;
+  } else if (selectedUser?.isGroup) {
+    avatar = message.senderId?.avatar || "https://ui-avatars.com/api/?name=?";
+  } else {
+    avatar = selectedUser?.avatar;
+  }
 
   const formatTime = (date) => {
     const messageDate = new Date(date);

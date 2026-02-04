@@ -17,22 +17,25 @@ const SendMessage = () => {
   const handleTyping = (e) => {
     setMessage(e.target.value);
 
-    // Only send typing indicator for 1-on-1 chats for now
-    if (socket && selectedUser && !selectedUser.isGroup) {
+    // Send typing indicator
+    if (socket && selectedUser) {
+      const typingData = {
+        receiverId: selectedUser._id,
+        senderId: userProfile._id,
+        isTyping: true,
+      };
+
+      if (selectedUser.isGroup) {
+        typingData.conversationId = selectedUser._id;
+      }
+
       if (e.target.value.length > 0 && !isTyping) {
         setIsTyping(true);
-        socket.emit('typing', {
-          receiverId: selectedUser._id,
-          senderId: userProfile._id,
-          isTyping: true,
-        });
+        socket.emit('typing', typingData);
       } else if (e.target.value.length === 0 && isTyping) {
         setIsTyping(false);
-        socket.emit('typing', {
-          receiverId: selectedUser._id,
-          senderId: userProfile._id,
-          isTyping: false,
-        });
+        typingData.isTyping = false;
+        socket.emit('typing', typingData);
       }
     }
   };
@@ -51,12 +54,16 @@ const SendMessage = () => {
     }
 
     // Stop typing indicator
-    if (socket && isTyping && !selectedUser.isGroup) {
-      socket.emit('typing', {
+    if (socket && isTyping && selectedUser) {
+      const typingData = {
         receiverId: selectedUser._id,
         senderId: userProfile._id,
         isTyping: false,
-      });
+      };
+      if (selectedUser.isGroup) {
+        typingData.conversationId = selectedUser._id;
+      }
+      socket.emit('typing', typingData);
       setIsTyping(false);
     }
 

@@ -217,12 +217,17 @@ const Usersidebar = () => {
 
           <button
             onClick={() => setActiveTab('groups')}
-            className={`flex-1 min-w-[80px] flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-sm font-medium transition ${activeTab === 'groups'
+            className={`flex-1 min-w-[80px] flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-sm font-medium transition relative ${activeTab === 'groups'
               ? 'bg-blue-500 text-white'
               : 'bg-[#1a1d29] text-gray-400 hover:bg-[#2d3142] hover:text-white'
               }`}
           >
             <BsChatQuoteFill /> Groups
+            {conversations.some(c => unreadMessages.includes(c._id)) && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+                {conversations.filter(c => unreadMessages.includes(c._id)).length}
+              </span>
+            )}
           </button>
 
           <button
@@ -333,6 +338,9 @@ const Usersidebar = () => {
                       <p className="font-semibold">{group.groupName}</p>
                       <p className="text-xs opacity-75">{group.participants.length} members</p>
                     </div>
+                    {unreadMessages.includes(group._id) && (
+                      <span className="ml-auto w-3 h-3 bg-red-500 rounded-full"></span>
+                    )}
                   </div>
                 ))}
               </div>

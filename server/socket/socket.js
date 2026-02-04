@@ -45,15 +45,32 @@ io.on("connection", async (socket) => {
     }
 
 
-    // Typing indicator
+    // Join Chat Room
+    socket.on("join-chat", (room) => {
+        socket.join(room);
+        // console.log(`User joined room: ${room}`);
+    });
+
     // Typing indicator
     socket.on("typing", (data) => {
-        const receiverSocketId = userSocketMap[data.receiverId];
-        if (receiverSocketId) {
-            io.to(receiverSocketId).emit("userTyping", {
+        if (data.conversationId) {
+            // Group Typing (Broadcast to room)
+            // Emit to everyone in room including sender (frontend filters sender)
+            // Or use socket.to(room) to exclude sender
+            socket.to(data.conversationId).emit("userTyping", {
                 senderId: data.senderId,
-                isTyping: data.isTyping
+                isTyping: data.isTyping,
+                conversationId: data.conversationId
             });
+        } else {
+            // 1-on-1 Typing
+            const receiverSocketId = userSocketMap[data.receiverId];
+            if (receiverSocketId) {
+                io.to(receiverSocketId).emit("userTyping", {
+                    senderId: data.senderId,
+                    isTyping: data.isTyping
+                });
+            }
         }
     });
 
