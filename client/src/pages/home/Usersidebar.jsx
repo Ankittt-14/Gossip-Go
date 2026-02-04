@@ -223,11 +223,20 @@ const Usersidebar = () => {
               }`}
           >
             <BsChatQuoteFill /> Groups
-            {conversations.some(c => unreadMessages.includes(c._id)) && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
-                {conversations.filter(c => unreadMessages.includes(c._id)).length}
-              </span>
-            )}
+            {(() => {
+              const unreadCount = conversations.filter(c => unreadMessages.includes(c._id)).length;
+              const pendingCount = conversations.filter(c => c.pendingParticipants?.includes(userProfile?._id)).length;
+              const totalBadge = unreadCount + pendingCount;
+
+              if (totalBadge > 0) {
+                return (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+                    {totalBadge}
+                  </span>
+                );
+              }
+              return null;
+            })()}
           </button>
 
           <button
@@ -341,7 +350,9 @@ const Usersidebar = () => {
                       <p className="font-semibold">{group.groupName}</p>
                       <p className="text-xs opacity-75">{group.participants.length} members</p>
                     </div>
-                    {unreadMessages.includes(group._id) && (
+                    {group.pendingParticipants?.includes(userProfile?._id) ? (
+                      <span className="ml-auto text-[10px] bg-yellow-500 text-black px-1.5 py-0.5 rounded font-bold">INVITE</span>
+                    ) : unreadMessages.includes(group._id) && (
                       <span className="ml-auto w-3 h-3 bg-red-500 rounded-full"></span>
                     )}
                   </div>
